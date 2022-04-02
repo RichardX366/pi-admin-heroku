@@ -85,23 +85,27 @@ const App: React.FC = () => {
                         <span className='mx-1' />
                         <ToggleSwitch
                           checked={currentTasks.value.includes(id)}
-                          onChange={() => {
-                            authEmit(
-                              'task',
-                              id,
-                              Object.entries(args[id].value)
-                                .map(([arg, value]) => {
-                                  switch (typeof value) {
-                                    case 'string':
-                                      return `${arg}=${value}`;
-                                    case 'boolean':
-                                      return value && arg;
-                                    default:
-                                      return undefined;
-                                  }
-                                })
-                                .filter(Boolean),
-                            );
+                          onChange={(checked) => {
+                            if (checked) {
+                              authEmit(
+                                'task',
+                                id,
+                                Object.entries(args[id].value)
+                                  .map(([arg, value]) => {
+                                    switch (typeof value) {
+                                      case 'string':
+                                        return `${arg}=${value}`;
+                                      case 'boolean':
+                                        return value && arg;
+                                      default:
+                                        return undefined;
+                                    }
+                                  })
+                                  .filter(Boolean),
+                              );
+                            } else {
+                              authEmit('killTask', id);
+                            }
                           }}
                         />
                         <br />
@@ -177,7 +181,7 @@ const App: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className='w-full absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 h-full overflow-y-scroll py-12 sm:py-24 px-12 sm:px-32'>
+          <div className='w-full absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 h-full py-12 sm:py-24 px-12 sm:px-32'>
             <div className='bg-white p-5 rounded-lg grid gap-4'>
               <div className='grid grid-cols-1 justify-center items-center'>
                 <Input
@@ -197,7 +201,7 @@ const App: React.FC = () => {
           </div>
         )
       ) : (
-        <div className='w-full absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 h-full overflow-y-scroll py-12 sm:py-24 px-12 sm:px-32'>
+        <div className='w-full absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 h-full py-12 sm:py-24 px-12 sm:px-32'>
           <div className='bg-white p-5 rounded-lg grid gap-4'>
             <div className='flex flex-col items-center gap-2 text-lg text-center'>
               <h1 className='text-3xl'>The Raspberry Pi is Currently Off</h1>

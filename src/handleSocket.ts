@@ -37,6 +37,11 @@ export default function handleSocket(io: Server) {
     currentTasks.push(newTask);
     io.to('users').emit('tasks', currentTasks);
   };
+  const killTask = (task: string) => {
+    io.to('pi').emit('killTask', task);
+    currentTasks.splice(currentTasks.indexOf(task), 1);
+    io.to('users').emit('tasks', currentTasks);
+  };
   const newTerminalCommand = (cmd: string) => {
     while (cmd[0] === ';') cmd = cmd.replace(';', '');
     history.push({ content: cmd, type: 'command' });
@@ -73,6 +78,12 @@ export default function handleSocket(io: Server) {
             'task',
             handleAuth((task, args) => {
               if (Object.keys(tasks).includes(task)) newTask(task, args);
+            }),
+          );
+          socket.on(
+            'killTask',
+            handleAuth((task) => {
+              if (currentTasks.includes(task)) killTask(task);
             }),
           );
           socket.on(
